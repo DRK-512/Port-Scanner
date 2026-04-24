@@ -17,4 +17,4 @@ target_compile_options(
 target_include_directories(${PROJ_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(${PROJ_NAME} sfml-network sfml-system)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Portscanner DESTINATION /usr/local/bin/)
+install(TARGETS ${PROJ_NAME} RUNTIME DESTINATION bin)
