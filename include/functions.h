@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <SFML/Network.hpp>
+#include <optional>
 
 void helpFunction(); 
 int string_to_int(const std::string& string); 
