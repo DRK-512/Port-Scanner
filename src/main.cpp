@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
     std::vector<int> ports;
     bool showClosed = false; 
     
-    /* get command line arguments */
+    /* Parse args really should be its own function, but whatever */
     if(argc>=2)
     {   /* switch statements don't support strings in C++, so that is why I used this */
         for(uint8_t i=0; i<argc; i++) {
@@ -34,21 +34,32 @@ int main(int argc, char* argv[])
 
     /* scan ports with respect to the address given */
     std::cout << "Showing open ports on " << address << "...\n";
+
     /* this formats the number of spaces needed for the ports */
     size_t width = num_digits(maximum(ports));
+
+    // Resolve once, outside the loop — DNS/parse only needs to happen one time.
+    // For SFMLv2 we did not need this, but SFMLv3 is more strict and requires this check
+    const std::optional<sf::IpAddress> remote = sf::IpAddress::resolve(address);
+    if (!remote)
+    {
+        std::cerr << "Error: could not resolve address '" << address << "'\n";
+        return 1;
+    }
+
     for (int port : ports) 
     {
         if(showClosed)
         {
             /* This will check if the socket is open or not */
-            if ((sf::TcpSocket().connect(address, port) == sf::Socket::Done))
+            if ((sf::TcpSocket().connect(*remote, static_cast<unsigned short>(port)) == sf::Socket::Status::Done))
                 std::cout << "Port " << std::setw(width) << port << " : OPEN\n";
             else
                 std::cout << "Port " << std::setw(width) << port << " : CLOSED\n";
         }
         else 
         {
-            if ((sf::TcpSocket().connect(address, port) == sf::Socket::Done))
+            if ((sf::TcpSocket().connect(*remote, static_cast<unsigned short>(port)) == sf::Socket::Status::Done))
                 std::cout << "Port " << std::setw(width) << port << " : OPEN\n";
         }
     }

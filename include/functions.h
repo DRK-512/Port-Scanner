@@ -5,10 +5,10 @@
 #include <cstdlib>
 #include <cstdint>
 #include <iomanip>
-#include <SFML/Network.hpp>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <SFML/Network.hpp>
 
 void helpFunction(); 
 int string_to_int(const std::string& string); 
