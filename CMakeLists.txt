@@ -15,6 +15,7 @@ target_compile_options(
 )
 
 target_include_directories(${PROJ_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(${PROJ_NAME} sfml-network sfml-system)
+find_package(SFML 3 COMPONENTS Network System REQUIRED)
+target_link_libraries(${PROJ_NAME} PRIVATE SFML::Network SFML::System)
 
 install(TARGETS ${PROJ_NAME} RUNTIME DESTINATION bin)
