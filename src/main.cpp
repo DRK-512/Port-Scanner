@@ -40,26 +40,29 @@ int main(int argc, char* argv[])
 
     // Resolve once, outside the loop — DNS/parse only needs to happen one time.
     // For SFMLv2 we did not need this, but SFMLv3 is more strict and requires this check
-    const std::optional<sf::IpAddress> remote = sf::IpAddress::resolve(address);
-    if (!remote)
+    const std::optional<std::vector<sf::IpAddress>> resolved = sf::Dns::resolve(address);
+    if (!resolved || resolved->empty())
     {
         std::cerr << "Error: could not resolve address '" << address << "'\n";
         return 1;
     }
+
+    // Use the first resolved address.
+    const sf::IpAddress remote = resolved->front();
 
     for (int port : ports) 
     {
         if(showClosed)
         {
             /* This will check if the socket is open or not */
-            if ((sf::TcpSocket().connect(*remote, static_cast<unsigned short>(port)) == sf::Socket::Status::Done))
+            if (sf::TcpSocket().connect(remote, static_cast<unsigned short>(port)) == sf::Socket::Status::Done)
                 std::cout << "Port " << std::setw(width) << port << " : OPEN\n";
             else
                 std::cout << "Port " << std::setw(width) << port << " : CLOSED\n";
         }
         else 
         {
-            if ((sf::TcpSocket().connect(*remote, static_cast<unsigned short>(port)) == sf::Socket::Status::Done))
+            if (sf::TcpSocket().connect(remote, static_cast<unsigned short>(port)) == sf::Socket::Status::Done)
                 std::cout << "Port " << std::setw(width) << port << " : OPEN\n";
         }
     }
